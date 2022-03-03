@@ -1,8 +1,10 @@
-package cadatabase
+package src
 
 import (
 	"fmt"
+
 	"github.com/jinzhu/gorm"
+
 	//. "github.com/logrusorgru/aurora"
 	log "github.com/sirupsen/logrus"
 )

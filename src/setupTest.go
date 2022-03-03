@@ -1,4 +1,4 @@
-package cadatabase
+package src
 
 import (
 	"github.com/jinzhu/gorm"
@@ -13,7 +13,7 @@ func SetupTest() (*gorm.DB, error) {
 	pgPassword := "Sacj0nhat!"
 	pgDatabase := "chartarchive_dev"
 	pgFacility := "demo"
-	SetDbConfig(pgServer,pgUser, pgPassword, pgDatabase, pgFacility)
+	SetDbConfig(pgServer, pgUser, pgPassword, pgDatabase, pgFacility)
 	_, err := Open()
 	//pgURL := fmt.Sprintf("host=%s port=5432 user=%s password=%s dbname=%s sslmode=disable", pgServer, pgUser, pgPassword, pgDatabase)
 	//pgValues := fmt.Sprintf("host=%s port=5432 user=%s password=%s dbname=%s sslmode=disable", pgServer, pgUser, pgPassword, pgDatabase)

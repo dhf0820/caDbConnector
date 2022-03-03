@@ -1,5 +1,4 @@
-
-package cadatabase
+package src
 
 import (
 	"fmt"
@@ -28,7 +27,6 @@ func TestSetDeviceIdsId(t *testing.T) {
 		})
 	})
 }
-
 
 func TestGetDeviceByRecipient(t *testing.T) {
 	db, err := SetupTest()
@@ -144,5 +142,3 @@ func TestCreateDevice(t *testing.T) {
 //		})
 //	})
 //}
-
-

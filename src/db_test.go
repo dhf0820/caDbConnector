@@ -1,5 +1,4 @@
-package cadatabase
-
+package src
 
 import (
 	"fmt"
@@ -30,7 +29,6 @@ import (
 // 		})
 // 	})
 // }
-
 
 // func TestGetDeviceByRecipient(t *testing.T) {
 // 	db, err := setupTest()
@@ -133,7 +131,7 @@ func TestReleaseById(t *testing.T) {
 	}
 	Convey("GetDevice", t, func() {
 		Convey("With ReleaseID: 1603", func() {
-			rel, err := ReleaseHistoryById( 1612)
+			rel, err := ReleaseHistoryById(1612)
 			//rel, err := GetReleaseHistory(362)
 			So(err, ShouldBeNil)
 			So(rel, ShouldNotBeNil)
@@ -228,4 +226,3 @@ func TestGetDocument(t *testing.T) {
 // 		})
 // 	})
 // }
-

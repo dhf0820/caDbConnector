@@ -1,4 +1,4 @@
-package cadatabase
+package src
 
 import (
 	"fmt"

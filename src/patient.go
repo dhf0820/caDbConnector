@@ -1,8 +1,10 @@
-package cadatabase
+package src
 
 import (
 	"fmt"
+
 	"github.com/jinzhu/gorm"
+
 	//. "github.com/logrusorgru/aurora"
 	log "github.com/sirupsen/logrus"
 )
@@ -36,7 +38,6 @@ func GetPatientByID(id uint32) (*Patient, error) {
 	}
 	return &pat, nil
 }
-
 
 //TODO: return a proper document including Document, Version, Image after type fix
 

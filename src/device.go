@@ -1,4 +1,4 @@
-package cadatabase
+package src
 
 import (
 	"encoding/json"
@@ -6,7 +6,9 @@ import (
 
 	//"database/sql"
 	"fmt"
+
 	"github.com/davecgh/go-spew/spew"
+
 	//"database/sql"
 	//"github.com/davecgh/go-spew/spew"
 	//"github.com/go-pg/pg/v10"
@@ -18,21 +20,21 @@ import (
 )
 
 type DbDevice struct {
-	ID    int32 						`json:"id"`
-	RecipientID     int				`json:"recipient_id"`
-	Method 			string             	`json:"method"`
-	Name   			string             	`json:"name"`
-	IdsID 			string 				`json:"ids_id"`
-	Fields 			[]byte 				`json:"fields" gorm:"type:bytea"`
+	ID          int32  `json:"id"`
+	RecipientID int    `json:"recipient_id"`
+	Method      string `json:"method"`
+	Name        string `json:"name"`
+	IdsID       string `json:"ids_id"`
+	Fields      []byte `json:"fields" gorm:"type:bytea"`
 }
 
 type IdsDevice struct {
-	ID    int32 						`json:"id"`
-	RecipientID     int 				`json:"recipient_id"`
-	Method 			string             	`json:"method"`
-	Name   			string             	`json:"name"`
-	IdsID 			string 				`json:"ids_id"`
-	Fields 			[]Field 				`json:"fields"`
+	ID          int32   `json:"id"`
+	RecipientID int     `json:"recipient_id"`
+	Method      string  `json:"method"`
+	Name        string  `json:"name"`
+	IdsID       string  `json:"ids_id"`
+	Fields      []Field `json:"fields"`
 }
 
 type Field struct {
@@ -47,18 +49,17 @@ type Field struct {
 	Sensitive    string `json:"sensitive"`
 }
 
-
 type Device struct {
-	ID    int32 						`json:"id"`
-	RecipientID     int 				`json:"recipient_id" gorm:"recipient_id"`
-	IdsRecipientID	string 				`json:"ids_recipient_id" gorm:"column:ids_recipient_id"`
-	Method 			string             	`json:"method"`
-	Name   			string             	`json:"name"`
-	IdsID 			string 				`json:"ids_id" gorm:"column:ids_id"`
-	Fields 			[]byte 				`json:"fields" gorm:"type:bytea"`
+	ID             int32  `json:"id"`
+	RecipientID    int    `json:"recipient_id" gorm:"recipient_id"`
+	IdsRecipientID string `json:"ids_recipient_id" gorm:"column:ids_recipient_id"`
+	Method         string `json:"method"`
+	Name           string `json:"name"`
+	IdsID          string `json:"ids_id" gorm:"column:ids_id"`
+	Fields         []byte `json:"fields" gorm:"type:bytea"`
 }
 
-func MigrateDevice() (error){
+func MigrateDevice() error {
 	db, err := CurrentDB()
 	if err != nil {
 		return fmt.Errorf("GetDeviceByRecipientAndMethod Database is not open")
@@ -68,7 +69,7 @@ func MigrateDevice() (error){
 	return nil
 }
 
-func GetDeviceForRecipient(recipId int,  method string) (*Device, error) {
+func GetDeviceForRecipient(recipId int, method string) (*Device, error) {
 	method = strings.ToLower(method)
 	var err error
 	var recip *Recipient
@@ -83,7 +84,7 @@ func GetDeviceForRecipient(recipId int,  method string) (*Device, error) {
 		if err != nil {
 			log.Errorf("Recipient: %d was not found", recipId)
 			return nil, err
-		}else {
+		} else {
 			log.Infof("Get %s device for %s", method, recip.Company.String)
 		}
 	}
@@ -98,7 +99,7 @@ func GetDeviceForRecipient(recipId int,  method string) (*Device, error) {
 		//}
 		//return device, nil
 	}
-	
+
 	//fmt.Printf("device:101 Found Device: %s\n", spew.Sdump(device))
 	return device, err
 }
@@ -120,30 +121,26 @@ func GetDeviceForId(devId int) (*Device, error) {
 	return device, err
 }
 
-
 func ToIdsDevice(d *Device) *IdsDevice {
 	ids := IdsDevice{}
 	json.Unmarshal(d.Fields, &ids.Fields)
 
-	ids.Name 		= d.Name
-	ids.ID 			= d.ID
-	ids.Method		= d.Method
-	ids.RecipientID	= d.RecipientID
+	ids.Name = d.Name
+	ids.ID = d.ID
+	ids.Method = d.Method
+	ids.RecipientID = d.RecipientID
 	//fmt.Printf("IdsDevice: %s\n", spew.Sdump(ids))
 	return &ids
 }
 
-
 func NewField(name, label, value, required string) *Field {
 	f := Field{}
-	f.Name 		= name
-	f.Label 	= label
-	f.Value		= value
-	f.Required	= required
+	f.Name = name
+	f.Label = label
+	f.Value = value
+	f.Required = required
 	return &f
 }
-
-
 
 func CreateDevice(recipId int, method string) (*Device, error) {
 	method = strings.ToLower(method)
@@ -151,7 +148,7 @@ func CreateDevice(recipId int, method string) (*Device, error) {
 	if err != nil {
 		return nil, fmt.Errorf("CreateDevice Database is not open")
 	}
-	recip, err  := GetRecipient(recipId)
+	recip, err := GetRecipient(recipId)
 	if err != nil {
 		log.Errorf("recipient_id: %d is invalid", recipId)
 		return nil, err
@@ -166,35 +163,35 @@ func CreateDevice(recipId int, method string) (*Device, error) {
 	//fmt.Printf("\n--Creating new Device for %s\n", spew.Sdump(recip))
 	d := Device{}
 
-	d.RecipientID 		= recip.ID //fmt.Sprintf("%s-%d", facility, recip.ID)
+	d.RecipientID = recip.ID //fmt.Sprintf("%s-%d", facility, recip.ID)
 	//d.Facility 			= facility
-	d.Method			= method
-	d.IdsRecipientID	= recip.IdsID
+	d.Method = method
+	d.IdsRecipientID = recip.IdsID
 
 	switch strings.ToLower(d.Method) {
 	case "email":
 		d.Name = recip.Email.String
 		fields := []Field{}
 		f := Field{}
-		f.Name 			= "to"
-		f.Label 		= "To"
-		f.Value 		= recip.Email.String
-		f.Required		= "true"
-		f.UserVisible	= "true"
+		f.Name = "to"
+		f.Label = "To"
+		f.Value = recip.Email.String
+		f.Required = "true"
+		f.UserVisible = "true"
 		fields = append(fields, f)
 		f = Field{}
-		f.Name			= "priority"
-		f.Label			= "Priority"
-		f.Value			= "3"
-		f.Required		= "false"
-		f.UserVisible	= "true"
+		f.Name = "priority"
+		f.Label = "Priority"
+		f.Value = "3"
+		f.Required = "false"
+		f.UserVisible = "true"
 		fields = append(fields, f)
 		f = Field{}
-		f.Name 			= "combined"
-		f.Label			= "Combined"
-		f.Value 		= "true"
-		f.Required		= "false"
-		f.UserVisible	= "true"
+		f.Name = "combined"
+		f.Label = "Combined"
+		f.Value = "true"
+		f.Required = "false"
+		f.UserVisible = "true"
 		fields = append(fields, f)
 		d.Fields, _ = json.Marshal(fields)
 
@@ -204,25 +201,25 @@ func CreateDevice(recipId int, method string) (*Device, error) {
 			d.Name = recip.Fax.String
 			fields := []Field{}
 			f := Field{}
-			f.Name 			= "to"
-			f.Label 		= "To"
-			f.Value 		= recip.Fax.String
-			f.Required		= "true"
-			f.UserVisible	= "true"
+			f.Name = "to"
+			f.Label = "To"
+			f.Value = recip.Fax.String
+			f.Required = "true"
+			f.UserVisible = "true"
 			fields = append(fields, f)
 			f = Field{}
-			f.Name			= "priority"
-			f.Label			= "Priority"
-			f.Value			= "3"
-			f.Required		= "false"
-			f.UserVisible	= "true"
+			f.Name = "priority"
+			f.Label = "Priority"
+			f.Value = "3"
+			f.Required = "false"
+			f.UserVisible = "true"
 			fields = append(fields, f)
 			f = Field{}
-			f.Name 			= "combined"
-			f.Label			= "Combined"
-			f.Value 		= "true"
-			f.Required		= "false"
-			f.UserVisible	= "true"
+			f.Name = "combined"
+			f.Label = "Combined"
+			f.Value = "true"
+			f.Required = "false"
+			f.UserVisible = "true"
 			fields = append(fields, f)
 			d.Fields, _ = json.Marshal(fields)
 		} else {
@@ -289,25 +286,25 @@ func CreateDevice(recipId int, method string) (*Device, error) {
 		d.Name = recip.EmrConfigName
 		fields := []Field{}
 		f := Field{}
-		f.Name 			= "to"
-		f.Label 		= "To"
-		f.Value 		= recip.Company.String	// When we add people to recipients this will be that name
-		f.Required		= "true"
-		f.UserVisible	= "true"
+		f.Name = "to"
+		f.Label = "To"
+		f.Value = recip.Company.String // When we add people to recipients this will be that name
+		f.Required = "true"
+		f.UserVisible = "true"
 		fields = append(fields, f)
 		f = Field{}
-		f.Name			= "priority"
-		f.Label			= "Priority"
-		f.Value			= "3"
-		f.Required		= "false"
-		f.UserVisible	= "true"
+		f.Name = "priority"
+		f.Label = "Priority"
+		f.Value = "3"
+		f.Required = "false"
+		f.UserVisible = "true"
 		fields = append(fields, f)
 		f = Field{}
-		f.Name 			= "combined"
-		f.Label			= "Combined"
-		f.Value 		= "false"
-		f.Required		= "false"
-		f.UserVisible	= "true"
+		f.Name = "combined"
+		f.Label = "Combined"
+		f.Value = "false"
+		f.Required = "false"
+		f.UserVisible = "true"
 		fields = append(fields, f)
 		d.Fields, _ = json.Marshal(fields)
 
@@ -320,17 +317,16 @@ func CreateDevice(recipId int, method string) (*Device, error) {
 	return &d, nil
 }
 
-
 //TODO: Possibly confirm the device.IDSRecipientID is set
 func SetDeviceIdsId(devId int, idsId string) error {
 	fmt.Printf("Setting IDS ID %d - %s \n", devId, idsId)
 	db, err := CurrentDB()
 	device, err := GetDeviceForId(devId)
 	if err != nil {
-		fmt.Printf("SetDevice %d IdsId %s  err: %v\n",devId, idsId, err)
+		fmt.Printf("SetDevice %d IdsId %s  err: %v\n", devId, idsId, err)
 		return err
 	}
-	recip, err :=  GetRecipient(device.RecipientID)
+	recip, err := GetRecipient(device.RecipientID)
 	if err != nil {
 		log.Errorf("recipient %d was not found for Device: %d err: %v", device.RecipientID, device.ID, err)
 	}

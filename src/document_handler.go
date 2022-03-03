@@ -1,28 +1,24 @@
-package cadatabase
+package src
 
 import (
-	"bytes"
-	b64 "encoding/base64"
+	//"bytes"
+	//b64 "encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
-	"time"
+	//"strconv"
 
-	//"github.com/davecgh/go-spew/spew"
+	//"time"
+
 	"github.com/davecgh/go-spew/spew"
+
 	log "github.com/sirupsen/logrus"
 
 	//"net/url"
-	//"github.com/davecgh/go-spew/spew"
-	"github.com/gorilla/mux"
+	//"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
-	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
-
-	//"github.com/vsoftcorp/cernerFhir/pkg/model"
-	"github.com/vsoftcorp/cernerFhir/pkg/ca"
-	m "github.com/vsoftcorp/cernerFhir/pkg/model"
-	"go.mongodb.org/mongo-driver/bson"
+	//"go.mongodb.org/mongo-driver/bson"
 )
 
 //"gopkg.in/mgo.v2/bson"
@@ -33,10 +29,10 @@ import (
 //"github.com/oleiade/reflections"
 
 type DocumentSummaryResponse struct {
-	StatusCode int                  `json:"status_code"`
-	Status     string               `json:"status"`
-	Count      int                  `json:"count"`
-	Documents  []*m.DocumentSummary `json:"documents"`
+	StatusCode int               `json:"status_code"`
+	Status     string            `json:"status"`
+	Count      int               `json:"count"`
+	Documents  []DocumentSummary `json:"documents"`
 }
 
 // type DocumentImageResponse struct {
@@ -55,8 +51,30 @@ type DocumentResponse struct {
 	Page         int64            `json:"page"`
 	Encounter    string           `json:"visit_num"`
 	SessionId    string           `json:"session_id"`
-	Documents    []*fhir.Document `json:"documents"`
-	Document     *fhir.Document   `json:"document"`
+	// Documents    []*fhir.Document `json:"documents"`
+	// Document     *fhir.Document   `json:"document"`
+}
+
+type DocumentFilter struct {
+	Skip          int64    `schema:"skip"`
+	Page          int64    `schema:"page"`
+	Limit         int64    `schema:"limit"`
+	SortBy        []string `schema:"sort"`
+	Column        string   `schema:"column"`
+	Order         string   `schema:"order"`
+	Count         string   `schema:"count"`  //Header
+	Source string
+	//EncounterID string `schema:"visit_num"``
+	MRN          string `schema:"mrn"`
+	ID           string `schema:"id"`
+	DocID        string `schema:"doc_id"`
+	ReptDatetime string `schema:"rept_datetime"`
+	Category     string `schema:"category"`
+	SourceValues []string `schema:"source_values"`
+	BeginDate    string   `schema:"begin_date"`
+	EndDate      string   `schema:"end_date"`
+	TabID        string   `schema:"tab_id"`
+
 }
 
 func WriteDocumentResponse(w http.ResponseWriter, resp *DocumentResponse) error {
@@ -91,145 +109,148 @@ func QueryDocuments(w http.ResponseWriter, r *http.Request) {
 	//fmt.Printf("#####################################QueryDocuments ################################\n")
 	log.Infof("###Raw QueryDocument query: %s", r.URL.RawQuery)
 	docFilter, err := SetupDocumentFilter(r)
-	fmt.Printf("DocFinter:93 -- %s\n", spew.Sdump(docFilter))
-	// log.Debugf("QueryDocuments handler")
-	// if r.Header.Get("AUTHORIZATION") == "" {
-	// 	resp := CADocumentResponse{}
-	// 	resp.StatusCode = 400
-	// 	resp.Message = "No Authorization"
-	// 	WriteCADocumentResponse(w, resp)
-	// }
+	if err != nil {
+		log.Panic(err.Error())
+	}
+	fmt.Printf("QueryDocuments:114 -- %s\n", spew.Sdump(docFilter))
+	// // log.Debugf("QueryDocuments handler")
+	// // if r.Header.Get("AUTHORIZATION") == "" {
+	// // 	resp := CADocumentResponse{}
+	// // 	resp.StatusCode = 400
+	// // 	resp.Message = "No Authorization"
+	// // 	WriteCADocumentResponse(w, resp)
+	// // }
 
-	// as := m.AuthSession{Token: r.Header.Get("AUTHORIZATION")}
-	// _, err := m.ValidateAuth(as.Token)
+	// // as := m.AuthSession{Token: r.Header.Get("AUTHORIZATION")}
+	// // _, err := m.ValidateAuth(as.Token)
+	// // if err != nil {
+	// // 	err = as.CreateSession()
+	// // 	if err != nil {
+	// // 		resp := CADocumentResponse{}
+	// // 		resp.StatusCode = 400
+	// // 		resp.Message = "No Authorization"
+	// // 		WriteCADocumentResponse(w, resp)
+	// // 	}
+	// // }
+	// // as.CreateSession()
+
+	// // if err != nil {
+	// // 	resp:= CADocumentResponse{}
+	// // 	resp.StatusCode = 400
+	// // 	resp.Message = "No Authorization"
+	// // 	WriteCADocumentResponse(w, resp)
+	// // }
+	// //docFilter, err := SetupDocumentFilter(r)
+
 	// if err != nil {
-	// 	err = as.CreateSession()
-	// 	if err != nil {
-	// 		resp := CADocumentResponse{}
+	// 	log.Errorf("SetupDocumentFilter:120 -- failed: %s", err.Error())
+	// 	// as := m.AuthSession{Token: r.Header.Get("AUTHORIZATION")}
+	// 	// as.CreateSession()
+	// 	// docFilter, err = SetupDocumentFilter(r)
+	// 	// if err != nil {
+	// 	resp := DocumentResponse{}
+	// 	//resp.CacheStatus = docFilter.Session.GetDocumentStatus()
+	// 	resp.StatusCode = 400
+	// 	resp.Message = err.Error()
+	// 	WriteCADocumentResponse(w, &resp)
+	// 	return
+
+	// }
+	// if docFilter.PatientGPI == "" {
+	// 	if docFilter.PatientID == "" {
+	// 		resp := DocumentResponse{}
+	// 		//resp.CacheStatus = docFilter.Session.GetDocumentStatus()
 	// 		resp.StatusCode = 400
-	// 		resp.Message = "No Authorization"
-	// 		WriteCADocumentResponse(w, resp)
+	// 		resp.Message = "no patient specified(patient_gpi)"
+	// 		WriteCADocumentResponse(w, &resp)
+	// 		return
 	// 	}
+	// 	docFilter.PatientGPI = docFilter.PatientID
 	// }
-	// as.CreateSession()
-
+	// if docFilter.Cache == "stats" { // Retrieve from cache only
+	// 	log.Debugf("DocumentHandler:148 -- querying stats")
+	// 	cacheStatus, pagesInCache, totalInCache, _ := docFilter.DocumentCacheStats()
+	// 	total := totalInCache //pf.CountCachedCaPatients()
+	// 	resp := DocumentResponse{}
+	// 	resp.CacheStatus = cacheStatus
+	// 	resp.Total = total
+	// 	resp.PagesInCache = pagesInCache
+	// 	resp.Page = docFilter.Page
+	// 	resp.StatusCode = 200
+	// 	resp.Message = "Ok"
+	// 	WriteDocumentResponse(w, &resp)
+	// 	return
+	// }
+	// // if docFilter.Cache == "clear" {
+	// // 	//log.Info("Clearing Cache")
+	// // 	m.DeleteDocuments(docFilter.PatientGPI)
+	// // 	inCache, err := docFilter.DocumentsInCache()
+	// // 	if err != nil {
+	// // 		resp := DocumentResponse{}
+	// // 		//resp.CacheStatus = docFilter.Session.GetDocumentStatus()
+	// // 		resp.StatusCode = 400
+	// // 		resp.Message = fmt.Sprintf("DocumentsInCache:168 -- err: %s", err.Error())
+	// // 		WriteCADocumentResponse(w, &resp)
+	// // 		return
+	// // 	}
+	// // 	log.Infof("QueryDocuments:172 -- %d in cache", inCache)
+	// // }
+	// if docFilter.Page == 0 {
+	// 	docFilter.Page = 1
+	// }
+	// inCache, err := docFilter.DocumentsInCache()
 	// if err != nil {
-	// 	resp:= CADocumentResponse{}
+	// 	resp := DocumentResponse{}
+	// 	//resp.CacheStatus = docFilter.Session.GetDocumentStatus()
 	// 	resp.StatusCode = 400
-	// 	resp.Message = "No Authorization"
-	// 	WriteCADocumentResponse(w, resp)
+	// 	resp.Message = fmt.Sprintf("DocumentsInCache err: %s", err.Error())
+	// 	WriteCADocumentResponse(w, &resp)
+	// 	return
 	// }
-	//docFilter, err := SetupDocumentFilter(r)
-
-	if err != nil {
-		log.Errorf("SetupDocumentFilter:120 -- failed: %s", err.Error())
-		// as := m.AuthSession{Token: r.Header.Get("AUTHORIZATION")}
-		// as.CreateSession()
-		// docFilter, err = SetupDocumentFilter(r)
-		// if err != nil {
-		resp := DocumentResponse{}
-		//resp.CacheStatus = docFilter.Session.GetDocumentStatus()
-		resp.StatusCode = 400
-		resp.Message = err.Error()
-		WriteCADocumentResponse(w, &resp)
-		return
-
-	}
-	if docFilter.PatientGPI == "" {
-		if docFilter.PatientID == "" {
-			resp := DocumentResponse{}
-			//resp.CacheStatus = docFilter.Session.GetDocumentStatus()
-			resp.StatusCode = 400
-			resp.Message = "no patient specified(patient_gpi)"
-			WriteCADocumentResponse(w, &resp)
-			return
-		}
-		docFilter.PatientGPI = docFilter.PatientID
-	}
-	if docFilter.Cache == "stats" { // Retrieve from cache only
-		log.Debugf("DocumentHandler:148 -- querying stats")
-		cacheStatus, pagesInCache, totalInCache, _ := docFilter.DocumentCacheStats()
-		total := totalInCache //pf.CountCachedCaPatients()
-		resp := DocumentResponse{}
-		resp.CacheStatus = cacheStatus
-		resp.Total = total
-		resp.PagesInCache = pagesInCache
-		resp.Page = docFilter.Page
-		resp.StatusCode = 200
-		resp.Message = "Ok"
-		WriteDocumentResponse(w, &resp)
-		return
-	}
-	if docFilter.Cache == "clear" {
-		//log.Info("Clearing Cache")
-		m.DeleteDocuments(docFilter.PatientGPI)
-		inCache, err := docFilter.DocumentsInCache()
-		if err != nil {
-			resp := DocumentResponse{}
-			//resp.CacheStatus = docFilter.Session.GetDocumentStatus()
-			resp.StatusCode = 400
-			resp.Message = fmt.Sprintf("DocumentsInCache:168 -- err: %s", err.Error())
-			WriteCADocumentResponse(w, &resp)
-			return
-		}
-		log.Infof("QueryDocuments:172 -- %d in cache", inCache)
-	}
-	if docFilter.Page == 0 {
-		docFilter.Page = 1
-	}
-	inCache, err := docFilter.DocumentsInCache()
-	if err != nil {
-		resp := DocumentResponse{}
-		//resp.CacheStatus = docFilter.Session.GetDocumentStatus()
-		resp.StatusCode = 400
-		resp.Message = fmt.Sprintf("DocumentsInCache err: %s", err.Error())
-		WriteCADocumentResponse(w, &resp)
-		return
-	}
-	log.Infof("QueryDocuments:176 -- %d in cache", inCache)
-	//log.Debugf("QueryDocuments:177 -- DocFilter: %s\n", spew.Sdump(docFilter))
-	docFilter.SearchReports()
-	if docFilter.Page == 0 {
-		docFilter.Page = 1
-	}
-	startTime := time.Now()
-	fhirDocs, cacheStatus, numberInPage, pagesInCache, totalInCache, err := docFilter.GetFhirDocumentPage()
-	elapsedTime := time.Since(startTime)
-	if err != nil {
-		resp := DocumentResponse{}
-		//resp.CacheStatus = docFilter.Session.GetDocumentStatus()
-		resp.StatusCode = 400
-		resp.Message = err.Error()
-		WriteCADocumentResponse(w, &resp)
-		return
-	}
-	//fmt.Printf("\nFhirDocuments: %s\n\n", spew.Sdump(fhirDocs))
-	if docFilter.ResultFormat == "ca" {
-		log.Infof("QueryDocuments:181 -- CacheStatus: %s", cacheStatus)
-		log.Infof("QueryDocuments:182 -- TotalInCache: %d", totalInCache)
-		log.Infof("QueryDocuments:183 -- PagesInCache: %d", pagesInCache)
-		log.Infof("QueryDocuments:187 -- ElapsedTime: %f seconds", elapsedTime.Seconds())
-		ca.FhirDocumentsToCA(w, totalInCache, pagesInCache, numberInPage, docFilter.Page, cacheStatus, fhirDocs)
-		// //fmt.Printf("\n\n\n   ### Requesting cached page %d\n", docFilter.Page)
-		// // fhirDocs, cacheStatus, numberInPage, pagesInCache, totalInCache, err := docFilter.GetFhirDocumentPage()
-		// // if err != nil {
-		// // 	resp.Message = err.Error()
-		// // 	resp.StatusCode = 400
-		// // 	WriteCADocumentResponse(w, &resp)
-		// // 	return
-		// // }
-		// fmt.Printf("number of documents in array: %d\n", len(fhirDocs))
-		// resp.Message = "Ok"
-		// resp.StatusCode = 200
-		// resp.CacheStatus = cacheStatus
-		// resp.Documents = fhirDocs
-		// resp.NumberInPage = numberInPage
-		// resp.PagesInCache = pagesInCache
-		// resp.Total = totalInCache
-		// resp.Documents = fhirDocs
-		// WriteCADocumentResponse(w, &resp)
-		return
-	}
+	// log.Infof("QueryDocuments:176 -- %d in cache", inCache)
+	// //log.Debugf("QueryDocuments:177 -- DocFilter: %s\n", spew.Sdump(docFilter))
+	// docFilter.SearchReports()
+	// if docFilter.Page == 0 {
+	// 	docFilter.Page = 1
+	// }
+	// startTime := time.Now()
+	// fhirDocs, cacheStatus, numberInPage, pagesInCache, totalInCache, err := docFilter.GetFhirDocumentPage()
+	// elapsedTime := time.Since(startTime)
+	// if err != nil {
+	// 	resp := DocumentResponse{}
+	// 	//resp.CacheStatus = docFilter.Session.GetDocumentStatus()
+	// 	resp.StatusCode = 400
+	// 	resp.Message = err.Error()
+	// 	WriteCADocumentResponse(w, &resp)
+	// 	return
+	// }
+	// //fmt.Printf("\nFhirDocuments: %s\n\n", spew.Sdump(fhirDocs))
+	// if docFilter.ResultFormat == "ca" {
+	// 	log.Infof("QueryDocuments:181 -- CacheStatus: %s", cacheStatus)
+	// 	log.Infof("QueryDocuments:182 -- TotalInCache: %d", totalInCache)
+	// 	log.Infof("QueryDocuments:183 -- PagesInCache: %d", pagesInCache)
+	// 	log.Infof("QueryDocuments:187 -- ElapsedTime: %f seconds", elapsedTime.Seconds())
+	// 	ca.FhirDocumentsToCA(w, totalInCache, pagesInCache, numberInPage, docFilter.Page, cacheStatus, fhirDocs)
+	// 	// //fmt.Printf("\n\n\n   ### Requesting cached page %d\n", docFilter.Page)
+	// 	// // fhirDocs, cacheStatus, numberInPage, pagesInCache, totalInCache, err := docFilter.GetFhirDocumentPage()
+	// 	// // if err != nil {
+	// 	// // 	resp.Message = err.Error()
+	// 	// // 	resp.StatusCode = 400
+	// 	// // 	WriteCADocumentResponse(w, &resp)
+	// 	// // 	return
+	// 	// // }
+	// 	// fmt.Printf("number of documents in array: %d\n", len(fhirDocs))
+	// 	// resp.Message = "Ok"
+	// 	// resp.StatusCode = 200
+	// 	// resp.CacheStatus = cacheStatus
+	// 	// resp.Documents = fhirDocs
+	// 	// resp.NumberInPage = numberInPage
+	// 	// resp.PagesInCache = pagesInCache
+	// 	// resp.Total = totalInCache
+	// 	// resp.Documents = fhirDocs
+	// 	// WriteCADocumentResponse(w, &resp)
+	// 	return
+	// }
 
 	//resp := DocumentResponse{}
 	// fmt.Printf("fhirDocuments: %s\n", spew.Sdump(fhirDocs))
@@ -315,13 +336,13 @@ func QueryDocuments(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func SetupDocumentFilter(r *http.Request) (*m.DocumentFilter, error) {
+func SetupDocumentFilter(r *http.Request) (*DocumentFilter, error) {
 
-	config := m.ActiveConfig()
+	//config := m.ActiveConfig()
 	decoder := schema.NewDecoder()
 	decoder.IgnoreUnknownKeys(true)
 
-	docFilter := m.DocumentFilter{}
+	docFilter := DocumentFilter{}
 	err := decoder.Decode(&docFilter, r.URL.Query())
 	if err != nil {
 		log.Printf("Filter:238 - parameters :%s\n ", err)
@@ -332,36 +353,6 @@ func SetupDocumentFilter(r *http.Request) (*m.DocumentFilter, error) {
 		log.Errorf("No SESSION Header")
 		return nil, errors.New("please log in")
 	}
-	log.Debugf("Got Session Header: %s", sessionId)
-	as, err := m.ValidateSession(sessionId)
-	if err != nil {
-		log.Errorf("NoSession:326 - %s", err.Error())
-		return nil, errors.New("please log in")
-	}
-	docFilter.Session = as
-	docFilter.SessionId = as.SessionID
-	docFilter.UserId = as.UserID.Hex()
-	count := r.Header.Get("Count")
-	if count == "" {
-		docFilter.Count = config.RecordLimit()
-	} else {
-		docFilter.Count = "20"
-	}
-	docFilter.CacheFilterBase = []bson.M{}
-	docFilter.CacheFilterBase = append(docFilter.CacheFilterBase, bson.M{"session_id": docFilter.SessionId})
-	if docFilter.ResultFormat == "" {
-		docFilter.ResultFormat = r.Header.Get("RESULTFORMAT")
-	}
-	if docFilter.ResultFormat == "" {
-		docFilter.ResultFormat = "ca"
-	}
-	//log.Debugf("header ResultFormat: %s", docFilter.ResultFormat)
-	if docFilter.Count == "" {
-		docFilter.Count = count
-	}
-	// if docFilter.EncounterID != "" {
-	// 	docFilter.EncounterID = ""
-	// }
 
 	return &docFilter, nil
 }
@@ -431,30 +422,30 @@ func WriteDocumentImageResponse(w http.ResponseWriter, statusCode int, data *[]b
 }
 
 //GetDocumentImage returns the image from the url passed in url=
-func GetDocumentImage(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	log.Debugf("GetDocumentImage Params: %v\n", params)
-	log.Debugf("id: %v\n", params["id"])
-	id := params["id"]
+// func GetDocumentImage(w http.ResponseWriter, r *http.Request) {
+// 	params := mux.Vars(r)
+// 	log.Debugf("GetDocumentImage Params: %v\n", params)
+// 	log.Debugf("sid: %v\n", params["id"])
+// 	sid := params["id"]
 
-	log.Debugf("Handler id: %s\n", id)
+// 	log.Debugf("Handler sid: %s\n", sid)
+// 	id, err := strconv.ParseUint(sid, 10, 64)
+// 	doc := DocumentSummary{PatientID:uint32(id)}
+// 	// err := doc.GetDocumentImage()
+// 	// if err != nil {
+// 	// 	log.Errorf("GetDocumentImage handler-379: Err: %v\n", err)
+// 	// 	HandleFhirError("GetDocumentImage-Handler", w, err)
 
-	doc := m.DocumentSummary{EnterpriseID: id}
-	// err := doc.GetDocumentImage()
-	// if err != nil {
-	// 	log.Errorf("GetDocumentImage handler-379: Err: %v\n", err)
-	// 	HandleFhirError("GetDocumentImage-Handler", w, err)
+// 	// 	return
+// 	// }
 
-	// 	return
-	// }
+// 	pdfBytes, err := b64.StdEncoding.DecodeString(doc.Image)
+// 	if err != nil {
+// 		log.Errorf("GetDocumentImage:308 error: %s", err.Error())
+// 	}
+// 	b := bytes.NewBuffer(pdfBytes)
 
-	pdfBytes, err := b64.StdEncoding.DecodeString(doc.Image)
-	if err != nil {
-		log.Errorf("GetDocumentImage:308 error: %s", err.Error())
-	}
-	b := bytes.NewBuffer(pdfBytes)
-
-	if _, err := b.WriteTo(w); err != nil {
-		fmt.Fprintf(w, "%s", err)
-	}
-}
+// 	if _, err := b.WriteTo(w); err != nil {
+// 		fmt.Fprintf(w, "%s", err)
+// 	}
+// }

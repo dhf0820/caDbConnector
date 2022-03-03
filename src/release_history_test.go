@@ -1,4 +1,4 @@
-package cadatabase
+package src
 
 import (
 	"fmt"
@@ -46,15 +46,14 @@ func TestGetReleaseHistoryByIDS(t *testing.T) {
 			hist, err := GetReleaseHistoryByIDS(Id)
 			//fmt.Printf("Elapse time for Document: %s\n", time.Since(startTime))
 			//Convey("Then the ReleaseHistory should be found", func() {
-				//fmt.Printf("History: %s\n", spew.Sdump(hist))
-				So(err, ShouldBeNil)
-				So(hist.IDSID.String, ShouldEqual, Id)
-				So(hist.RecipientID, ShouldEqual, 10)
+			//fmt.Printf("History: %s\n", spew.Sdump(hist))
+			So(err, ShouldBeNil)
+			So(hist.IDSID.String, ShouldEqual, Id)
+			So(hist.RecipientID, ShouldEqual, 10)
 			//})
 		})
 	})
 }
-
 
 func TestSetDeliveryStatus(t *testing.T) {
 	db, err := SetupTest()
@@ -124,4 +123,3 @@ func TestGetNewReleaseHistories(t *testing.T) {
 		})
 	})
 }
-

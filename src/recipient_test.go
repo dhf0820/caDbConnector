@@ -1,4 +1,4 @@
-package cadatabase
+package src
 
 import (
 	"fmt"
@@ -32,4 +32,3 @@ func TestGetRecipient(t *testing.T) {
 		})
 	})
 }
-

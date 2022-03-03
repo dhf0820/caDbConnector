@@ -1,4 +1,4 @@
-package cadatabase
+package src
 
 import (
 	"database/sql"
@@ -15,7 +15,7 @@ var (
 	PgUser       string
 	PgPassword   string
 	PgDatabase   string
-	PgFacility 	 string
+	PgFacility   string
 	searchSchema string
 )
 
@@ -25,7 +25,7 @@ func SetDbConfig(pgServer, pgUser, pgPassword, pgDatabase, pgFacility string) {
 	PgPassword = pgPassword
 	PgDatabase = pgDatabase
 	PgFacility = pgFacility
-	fmt.Printf("cadatabase.setDbConfig: %s:%s facility: %s\n", PgUser, PgPassword, pgFacility)
+	fmt.Printf("caDbConnector.setDbConfig: %s:%s facility: %s\n", PgUser, PgPassword, pgFacility)
 
 }
 
@@ -82,19 +82,19 @@ func CurrentDB() (*gorm.DB, error) {
 
 //ToNullString invalidates a sql.NullString if empty, validates if not empty
 func ToNullString(s string) sql.NullString {
-	return sql.NullString{String : s, Valid : s != ""}
+	return sql.NullString{String: s, Valid: s != ""}
 }
 
 //ToNullInt64 validates a sql.NullInt64 if incoming string evaluates to an integer, invalidates if it does not
 func ToNullInt64(s string) sql.NullInt64 {
 	i, err := strconv.Atoi(s)
-	return sql.NullInt64{Int64 : int64(i), Valid : err == nil}
+	return sql.NullInt64{Int64: int64(i), Valid: err == nil}
 }
 
 //ToNullInt32 validates a sql.NullInt64 if incoming string evaluates to an integer, invalidates if it does not
 func ToNullInt32(s string) sql.NullInt32 {
 	i, err := strconv.Atoi(s)
-	return sql.NullInt32{Int32 : int32(i), Valid : err == nil}
+	return sql.NullInt32{Int32: int32(i), Valid: err == nil}
 }
 
 func MigrateAll() {

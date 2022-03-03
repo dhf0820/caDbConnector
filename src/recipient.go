@@ -1,7 +1,8 @@
-package cadatabase
+package src
 
 import (
 	"fmt"
+
 	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
 )
@@ -27,8 +28,7 @@ import (
 //	ApprovedManually 	sql.NullBool	`gorm:"colume:approved_manually"`
 //}
 
-
-func MigrateRecipient() (error){
+func MigrateRecipient() error {
 	db, err := CurrentDB()
 	if err != nil {
 		return fmt.Errorf("MigrateRecipient Database is not open")

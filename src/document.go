@@ -1,4 +1,4 @@
-package cadatabase
+package src
 
 import (
 	"fmt"
@@ -12,7 +12,6 @@ import (
 	//log "github.com/sirupsen/logrus"
 	"os"
 )
-
 
 func DocumentSummaryByVersionId(versionId uint32) (*DocumentSummary, error) {
 	var err error
@@ -56,7 +55,6 @@ func DocumentSummaryByVersionId(versionId uint32) (*DocumentSummary, error) {
 	ds.Source = doc.Source
 	ds.Facility = doc.Facility
 
-
 	dt := DocumentType{}
 	if err = db.Where("id = ?", vers.DocumentTypeID).Find(&dt).Error; gorm.IsRecordNotFoundError(err) {
 		// log it
@@ -91,7 +89,6 @@ func DocumentByVersionID(versionId uint32) (*Document, error) {
 	return doc, err
 }
 
-
 //fullDocument returns the set of records that make up the old QC document ClinDoc, Version, Image
 func DocumentByID(cdocid uint) (*Document, error) {
 	var err error
@@ -110,8 +107,8 @@ func DocumentByID(cdocid uint) (*Document, error) {
 	doc.DocId = uint32(cdoc.ID)
 	doc.VersionId = uint32(cdoc.CurrentVersionID)
 	doc.PatientId = cdoc.PatientID
-  doc.VisitId = cdoc.VisitID
-	
+	doc.VisitId = cdoc.VisitID
+
 	// caDoc.ID = cdoc.ID
 	// caDoc.VersionId = cdoc.CurrentVersionID
 
@@ -132,7 +129,7 @@ func DocumentByID(cdocid uint) (*Document, error) {
 
 	if err := db.Where("id = ?", vers.DocumentTypeID).Find(&dType).Error; gorm.IsRecordNotFoundError(err) {
 		//log it
-		log.Errorf("DocumentType: %d was not found: %s", vers.DocumentTypeID,  err.Error())
+		log.Errorf("DocumentType: %d was not found: %s", vers.DocumentTypeID, err.Error())
 		return nil, err
 	}
 
@@ -142,16 +139,16 @@ func DocumentByID(cdocid uint) (*Document, error) {
 	if imageHost == "" {
 		imageHost = "http://docker1.ihids.com:4567/api/v1/pdf"
 	}
-	imageUrl := fmt.Sprintf("%s/%d", imageHost, doc.VersionId)	
+	imageUrl := fmt.Sprintf("%s/%d", imageHost, doc.VersionId)
 	//fmt.Printf("imageURL: %s\n", imageUrl)
-  doc.ImageUrl = imageUrl	
+	doc.ImageUrl = imageUrl
 	docHost := os.Getenv("DOC_HOST")
 	if docHost == "" {
 		docHost = "http://docker1.ihids.com:4567/api/v1/document_details"
 	}
 	docUrl := fmt.Sprintf("%s/%d", docHost, doc.DocId)
 	//fmt.Printf("docURL: %s\n", docUrl)
-  doc.DocUrl = docUrl
+	doc.DocUrl = docUrl
 	//fmt.Printf("Final Document from database: %s\n", spew.Sdump(doc))
 	return &doc, nil
 }

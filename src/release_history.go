@@ -1,11 +1,12 @@
-package cadatabase
+package src
 
 import (
 	"database/sql"
 	"fmt"
+	"os"
+
 	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
-	"os"
 	//"github.com/lib/pq"
 	//"github.com/davecgh/go-spew/spew"
 	//"time"
@@ -50,7 +51,6 @@ import (
 // }
 
 type DeliveryInformation struct {
-
 }
 
 //func SetIDS(id string, status string) {
@@ -148,7 +148,6 @@ func SetDeliveryStatus(histid int, ids_id string, status string) error {
 	return nil
 }
 
-
 func ReSetDeliveryStatus(histid int) error {
 	db, err := CurrentDB()
 	if err != nil {
@@ -158,8 +157,8 @@ func ReSetDeliveryStatus(histid int) error {
 	hist, err := ReleaseHistoryById(histid)
 	//hist, err := GetReleaseHistoryByIDS(ids_id)
 	if err != nil {
-			fmt.Printf("History: %d was not found\n", histid)
-			return err
+		fmt.Printf("History: %d was not found\n", histid)
+		return err
 	}
 	hist.Status.String = status
 	hist.Status.Valid = true
@@ -186,25 +185,24 @@ func GetReleaseDocuments(relId uint) ([]*Document, error) {
 	}
 	//fmt.Printf("HistoryDocs: %s\n", spew.Sdump(dhDocs))
 
-
 	docs := []*Document{}
 	for _, rd := range dhDocs {
-		doc, _ := DocumentByVersionID(rd.DocumentId)  //DocumentId is actually VersionId
+		doc, _ := DocumentByVersionID(rd.DocumentId) //DocumentId is actually VersionId
 		//fmt.Printf("Filled By Version: %s\n", spew.Sdump(doc))
-		doc.ImageUrl = os.Getenv("IMAGE_HOST") 
+		doc.ImageUrl = os.Getenv("IMAGE_HOST")
 		if doc.ImageUrl == "" {
 			doc.ImageUrl = "http://docker1.ihids.com:4567/api/v1/pdf"
 		}
-		doc.DocUrl= os.Getenv("DOC_HOST") 
+		doc.DocUrl = os.Getenv("DOC_HOST")
 		if doc.DocUrl == "" {
 			doc.DocUrl = "http://docker1.ihids.com:4567/api/v1/document_details"
 		}
 		doc.DocUrl = fmt.Sprintf("%s/%d", doc.DocUrl, doc.DocId)
 		doc.ImageUrl = fmt.Sprintf("%s/%d", doc.ImageUrl, doc.VersionId)
-		doc.RelDocId = rd.ID 		// deliveryHistory id
+		doc.RelDocId = rd.ID // deliveryHistory id
 		docs = append(docs, doc)
 	}
-//fmt.Printf("Documents: %s\n", spew.Sdump(docs))
+	//fmt.Printf("Documents: %s\n", spew.Sdump(docs))
 	return docs, nil
 }
 
@@ -222,7 +220,6 @@ func DeliveryHistoriesById(roiID uint) ([]*DeliveryHistory, error) {
 		log.Errorf("No DeliveryHistories forund for %d : %s", roiID, err)
 		return nil, err
 	}
-
 
 	//doc.Cdoc = &cdoc
 	//vers := DocumentVersion{}
