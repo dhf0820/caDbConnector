@@ -8,8 +8,8 @@ import (
 	"time"
 
 	//"github.com/davecgh/go-spew/spew"
-	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
-	m "github.com/vsoftcorp/cernerFhir/pkg/model"
+	fhir "github.com/dhf0820/cernerFhir/fhirongo"
+	m "github.com/dhf0820/cernerFhir/pkg/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

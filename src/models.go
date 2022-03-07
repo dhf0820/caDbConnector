@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/lib/pq"
-	//pat "github.com/vsoftcorp/caDbConnector/patient"
-	// vis "github.com/vsoftcorp/caDbConnectorvisit"
+	//pat "github.com/dhf0820/caDbConnector/patient"
+	// vis "github.com/dhf0820/caDbConnectorvisit"
 )
 
 type ArchivedImage struct {
@@ -39,33 +39,33 @@ type CaDocument struct {
 }
 
 type ClinicalDocument struct {
-	ID                 uint
-	PatientID          uint
-	VisitID            uint
-	CurrentVersionID   uint
-	TypeID             uint
-	Facility           string
-	SendingApp         string
+	ID               uint
+	PatientID        uint
+	VisitID          uint
+	CurrentVersionID uint
+	TypeID           uint
+	Facility         string
+	SendingApp       string
 	//AssigningAuthority sql.NullString //Not Used
 	//AccessionNumber    sql.NullString //Not used
 	//AccessionQualifier sql.NullString // Not used
-	DocID              sql.NullInt64  // old QC docID
-	DocRef             sql.NullString
-	Hidden             bool
-	Description        string
-	Class              string
-	ClassCoding        string
-	Category           string
-	CategoryCoding     string
-	DocumentId         string
-	DocumentUrl        string
-	Version            string
-	VersionId          uint
-	HpfDocURLS         pq.StringArray `gorm:"column:hpf_doc_urls type:varchar(50)[]"` //[]string `gorm:"column:hpf_doc_urls"`
+	DocID          sql.NullInt64 // old QC docID
+	DocRef         sql.NullString
+	Hidden         bool
+	Description    string
+	Class          string
+	ClassCoding    string
+	Category       string
+	CategoryCoding string
+	DocumentId     string
+	DocumentUrl    string
+	Version        string
+	VersionId      uint
+	HpfDocURLS     pq.StringArray `gorm:"column:hpf_doc_urls type:varchar(50)[]"` //[]string `gorm:"column:hpf_doc_urls"`
 	// string `gorm:"column:hpf_doc_urls"`
 	HpfDocHost sql.NullString
-	DUID      string `gorm:"column:duid"` //Current not filled in this will be dropped
-	Source    string
+	DUID       string `gorm:"column:duid"` //Current not filled in this will be dropped
+	Source     string
 	//OldType   uint //Not used
 	UpdatedAt *time.Time
 	CreatedAt *time.Time
@@ -73,28 +73,28 @@ type ClinicalDocument struct {
 }
 
 type DocumentSummary struct {
-	VersionID    uint32 //Since everything in CA is based of the version number this is ID
-	DocID        uint32
-	PatientID    uint32
-	VisitID      uint32
-	Class              string
-	ClassCoding        string
-	Category           string
-	CategoryCoding     string
-	Description  string
-	SubTitle     string
-	Pages        uint
-	Source       string
-	Facility     string
-	RecvDateTime *time.Time
-	ReptDateTime *time.Time
-	ImageID      uint
-	ImageType    string
-	ImageUrl     string // pdf/versionID
-	Repository   string
-	UpdatedAt    *time.Time
-	CreatedAt    *time.Time
-	DeletedAt    *time.Time // When soft delete
+	VersionID      uint32 //Since everything in CA is based of the version number this is ID
+	DocID          uint32
+	PatientID      uint32
+	VisitID        uint32
+	Class          string
+	ClassCoding    string
+	Category       string
+	CategoryCoding string
+	Description    string
+	SubTitle       string
+	Pages          uint
+	Source         string
+	Facility       string
+	RecvDateTime   *time.Time
+	ReptDateTime   *time.Time
+	ImageID        uint
+	ImageType      string
+	ImageUrl       string // pdf/versionID
+	Repository     string
+	UpdatedAt      *time.Time
+	CreatedAt      *time.Time
+	DeletedAt      *time.Time // When soft delete
 
 }
 

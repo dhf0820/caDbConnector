@@ -1,11 +1,11 @@
-module githup.com/vsoftcorp/caDbConnector
+module githup.com/dhf0820/caDbConnector
 
 go 1.17
 
-//replace github.com/vsoftcorp/caDbConnector => ../caDbConnector
-//replace github.com/vsoftcorp/caDbConnector => /Volumes/Seagate-8/Dropbox/development/caDbConnector
+//replace github.com/dhf0820/caDbConnector => ../caDbConnector
+//replace github.com/dhf0820/caDbConnector => /Volumes/Seagate-8/Dropbox/development/caDbConnector
 
-replace github.com/vsoftcorp/caDbConnector => /home/dhf/Dropbox/development/caDbConnector
+replace github.com/dhf0820/caDbConnector => /home/dhf/Dropbox/development/caDbConnector
 
 require (
 	github.com/davecgh/go-spew v1.1.1
@@ -16,7 +16,7 @@ require (
 	github.com/lib/pq v1.10.4
 	github.com/sirupsen/logrus v1.8.1
 	github.com/smartystreets/goconvey v1.7.2
-	github.com/vsoftcorp/caDbConnector v0.0.0-00010101000000-000000000000
+	github.com/dhf0820/caDbConnector v0.0.0-00010101000000-000000000000
 )
 
 require (

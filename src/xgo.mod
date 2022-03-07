@@ -1,8 +1,8 @@
-module githup.com/vsoftcorp/caDbConnector
+module githup.com/dhf0820/caDbConnector
 
 go 1.17
 
-replace github.com/vsoftcorp/caDbConnector => /Users/dhf/Dropbox/development/caDbConnector
+replace github.com/dhf0820/caDbConnector => /Users/dhf/Dropbox/development/caDbConnector
 
 require (
 	github.com/davecgh/go-spew v1.1.1

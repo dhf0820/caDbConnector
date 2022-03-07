@@ -10,10 +10,9 @@ import (
 	//"github.com/swaggo/http-swagger" // http-swagger middleware
 
 	// http-swagger middleware
+	src "github.com/dhf0820/caDbConnector/src"
 	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
-	src "github.com/vsoftcorp/caDbConnector/src"
-
 	//m "pkg/model"
 )
 

@@ -1,4 +1,5 @@
-module gitlab.com/vsoftcorp/caDbConnector
+module gitlab.com/dhf0820/caDbConnector
 
 go 1.17
-replace github.com/vsoftcorp/caDBConnector => /Users/dhf/Dropbox/development/caDbConnector
+
+replace github.com/dhf0820/caDBConnector => /Users/dhf/Dropbox/development/caDbConnector
