@@ -18,7 +18,8 @@ func ClinicalDocumentByID(id int) (*ClinicalDocument, error) {
 	}
 	cdoc := ClinicalDocument{}
 
-	if err = db.Debug().Where("id = ?", id).Find(&cdoc).Error; gorm.IsRecordNotFoundError(err) {
+//if err = db.Debug().Where("id = ?", id).Find(&cdoc).Error; gorm.IsRecordNotFoundError(err) {
+	if err = db.Where("id = ?", id).Find(&cdoc).Error; gorm.IsRecordNotFoundError(err) {
 		// log it
 		log.Errorf("ClinicalDocument %d was not found: %s", cdoc.ID, err)
 		return nil, err

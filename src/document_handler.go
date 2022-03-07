@@ -29,12 +29,19 @@ import (
 //"github.com/oleiade/reflections"
 
 type DocumentSummaryResponse struct {
-	StatusCode int               `json:"status_code"`
-	Status     string            `json:"status"`
-	Count      int               `json:"count"`
-	Documents  []DocumentSummary `json:"documents"`
+	StatusCode int               	`json:"status_code"`
+	Message     string            `json:"message"`
+	Count      	int               `json:"count"`
+	Document		DocumentSummary		`json:"document"`
+	Documents  	[]DocumentSummary `json:"documents"`
 }
 
+type ClinicalDocumentResponse struct {
+	StatusCode 	int 								`json:"status_code"`
+	Message 		string							`json:"message"`
+	Document 		ClinicalDocument		`json:"document"`
+	Documents 	[]ClinicalDocument	`json:"documents"`
+}
 // type DocumentImageResponse struct {
 // 	StatusCode int             `json:"status_code"`
 // 	Status     string          `json:"status"`

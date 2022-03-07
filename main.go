@@ -25,7 +25,7 @@ import (
 // There is no security at this time so only fake PHI is being used.
 // Supports patient/encounters/documents(Diagnostic Reports)
 
-var (
+//var (
 // 	config  *Config
 // 	name    string
 // 	mode    string
@@ -51,10 +51,10 @@ func main() {
 	}
 
 	log.Infof("Calling Initialize all")
-	config = src.InitializeAll(mongoURL)
+	config := src.InitializeAll(mongoURL, "")
 
 	port := config.Port()
-	mode := config.Mode()
+	//mode := config.Mode()
 	router := src.NewRouter()
 	config.SetRouter(router)
 	// log.Infof("Serving %s FHIR interface VERSION %s in %s mode on port: %s", config.Source(), config.ServerVersion(), mode, port)
@@ -62,7 +62,7 @@ func main() {
 	// log.Infof("Image URL: %s", config.ImageURL())
 	// log.Infof("Ca Image URL: %s", config.Env("caImageURL"))
 	// log.Infof("Ca Server url: %s", config.Env("caServerURL"))
-	mainErr = http.ListenAndServe(3000, router)
+	mainErr := http.ListenAndServe(port, router)
 	if mainErr != nil {
 		log.Errorf("Main error: %v", mainErr)
 	}

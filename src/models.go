@@ -46,9 +46,9 @@ type ClinicalDocument struct {
 	TypeID             uint
 	Facility           string
 	SendingApp         string
-	AssigningAuthority sql.NullString //Not Used
-	AccessionNumber    sql.NullString //Not used
-	AccessionQualifier sql.NullString // Not used
+	//AssigningAuthority sql.NullString //Not Used
+	//AccessionNumber    sql.NullString //Not used
+	//AccessionQualifier sql.NullString // Not used
 	DocID              sql.NullInt64  // old QC docID
 	DocRef             sql.NullString
 	Hidden             bool
@@ -61,12 +61,12 @@ type ClinicalDocument struct {
 	DocumentUrl        string
 	Version            string
 	VersionId          uint
-	//HpfDocURLS         pq.StringArray `gorm:"column:hpf_doc_urls type:varchar(50)[]"` //[]string `gorm:"column:hpf_doc_urls"`
+	HpfDocURLS         pq.StringArray `gorm:"column:hpf_doc_urls type:varchar(50)[]"` //[]string `gorm:"column:hpf_doc_urls"`
 	// string `gorm:"column:hpf_doc_urls"`
-	//HpfDocHost sql.NullString
-	DUID      string `gorm:"column:duid"` //Current not filled in this will
+	HpfDocHost sql.NullString
+	DUID      string `gorm:"column:duid"` //Current not filled in this will be dropped
 	Source    string
-	OldType   uint //Not used
+	//OldType   uint //Not used
 	UpdatedAt *time.Time
 	CreatedAt *time.Time
 	DeletedAt *time.Time
@@ -77,7 +77,10 @@ type DocumentSummary struct {
 	DocID        uint32
 	PatientID    uint32
 	VisitID      uint32
-	DocType      string
+	Class              string
+	ClassCoding        string
+	Category           string
+	CategoryCoding     string
 	Description  string
 	SubTitle     string
 	Pages        uint

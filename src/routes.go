@@ -58,12 +58,18 @@ var routes = Routes{
 	// 	"/api/rest/v1/session{id}/encounter",
 	// 	SessionEncounters,
 	// },
-	// Route{
-	// 	"QueryDocuments",
-	// 	"GET",
-	// 	"/api/rest/v1/documents",
-	// 	QueryDocuments,
-	// },
+	Route{
+		"QueryDocuments",
+		"GET",
+		"/api/rest/v1/documents",
+		QueryDocuments,
+	},
+	Route{
+		"InsertDocuments",
+		"POST",
+		"/api/rest/v1/document",
+		PostDocument,
+	},
 	// // Route{
 	// // 	"GetEncounter",
 	// // 	"GET",

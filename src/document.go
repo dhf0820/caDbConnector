@@ -62,7 +62,7 @@ func DocumentSummaryByVersionId(versionId uint32) (*DocumentSummary, error) {
 		return nil, err
 	}
 	ds.Description = dt.Description
-	ds.DocType = dt.Code
+	ds.Class = dt.Code
 
 	return &ds, nil
 }
@@ -152,6 +152,9 @@ func DocumentByID(cdocid uint) (*Document, error) {
 	//fmt.Printf("Final Document from database: %s\n", spew.Sdump(doc))
 	return &doc, nil
 }
+
+
+
 
 //func DeliveryHistoriesByRoiID(roiID int) ([]DeliveryHistories, error) {
 //	var err error s

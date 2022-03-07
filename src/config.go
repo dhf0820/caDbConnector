@@ -20,10 +20,17 @@ type Config struct {
 	logLevel       log.Level
 }
 
-var config Config
+var config *Config
 func InitializeAll(mongo, ca string)*Config {
-	config = Config{}
+	config = &Config{}
 	config.port = os.Getenv("DBPORT")
-	return &config
+	return config
 
+}
+
+func (c *Config) Port() string {
+	return config.port
+}
+func (c *Config) SetRouter(m *mux.Router) {
+	c.router = m
 }

@@ -23,7 +23,7 @@ func TestHealthCheck(t *testing.T) {
 			NewRouter().ServeHTTP(resp, req)
 			healthResp := HealthResponse{}
 			json.NewDecoder(resp.Body).Decode(&healthResp)
-			So(healthResp.Status, ShouldEqual, "ok")
+			So(healthResp.Status, ShouldEqual, 200)
 	})
 }
 

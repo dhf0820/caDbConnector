@@ -8,11 +8,17 @@ import (
 
 func SetupTest() (*gorm.DB, error) {
 	//pgServer := "db.vertisoft.com"
-	pgServer := "docker-2.ihids.com"
-	pgUser := "chartarchive"
-	pgPassword := "Sacj0nhat!"
-	pgDatabase := "chartarchive_dev"
-	pgFacility := "demo"
+	pgServer := "chartarchive.chw.edu"
+	pgUser := "dhf"
+	pgPassword := "Sacj0nhat1"
+	pgDatabase := "chartarchive"
+	pgFacility := "mmr"
+
+	// pgServer := "docker-2.ihids.com"
+	// pgUser := "chartarchive"
+	// pgPassword := "Sacj0nhat!"
+	// pgDatabase := "chartarchive_dev"
+	// pgFacility := "demo"
 	SetDbConfig(pgServer, pgUser, pgPassword, pgDatabase, pgFacility)
 	_, err := Open()
 	//pgURL := fmt.Sprintf("host=%s port=5432 user=%s password=%s dbname=%s sslmode=disable", pgServer, pgUser, pgPassword, pgDatabase)
@@ -22,7 +28,7 @@ func SetupTest() (*gorm.DB, error) {
 	if err != nil {
 		log.Fatalf("Could not access the db: %s", err.Error())
 	}
-	_, err = SetFacility("demo")
+	_, err = SetFacility("mmr")
 	//searchSchema := fmt.Sprintf("set search_path=%s, public", "demo")
 	//db.Exec(searchSchema)
 	return CurrentDB()
